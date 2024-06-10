@@ -1,11 +1,18 @@
 self.addEventListener('push', function(event) {
-    const data = event.data.json();
-    const options = {
+  console.log(event.data);
+  const data = event.data.json();
+  self.registration.showNotification(data.title, {
       body: data.body,
       icon: data.icon,
-      badge: data.badge
-    };
-    event.waitUntil(
-      self.registration.showNotification(data.title, options)
-    );
+      data: {
+          url: data.url
+      }
   });
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(
+      clients.openWindow(event.notification.data.url)
+  );
+});
